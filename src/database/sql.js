@@ -1,0 +1,11 @@
+export const queryUser = `SELECT * FROM users`;
+export const createUser = `INSERT INTO users (id, first_name, last_name, email, password, phone_no, is_admin) VALUES ($1, $2, $3, $4, $5, $6, $7) returning *`;
+export const queryProperty = `INSERT INTO property (id, user_id, title, status, type, price, city, state, bedrooms, description, image_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning *`;
+export const queryUserByEmail = `SELECT * FROM users WHERE email = $1`;
+export const queryUserById = `SELECT * FROM users WHERE id = $1`;
+export const updateProperty = `UPDATE property SET title=$1, price=$2, city=$3, state=$4, bedrooms=$5, description=$6, created_at=$7 image_url=$8 WHERE id=$9, user_id=$10,`;
+export const findOneQuery = `SELECT * FROM property WHERE id=$1 AND user_id=$2`;
+export const markAsSold = `UPDATE property SET status = 'sold' WHERE id=$1`;
+export const deletePropQuery = `DELETE FROM property WHERE id=$1`;
+export const queryAllProperty = `SELECT * FROM property`;
+export const queryPropertyByType = `SELECT * FROM properties WHERE type = $1`;
