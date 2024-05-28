@@ -9,3 +9,4 @@ export const markAsSold = `UPDATE property SET status = 'sold' WHERE id=$1`;
 export const deletePropQuery = `DELETE FROM property WHERE id=$1`;
 export const queryAllProperty = `SELECT * FROM property`;
 export const queryPropertyByType = `SELECT * FROM properties WHERE type = $1`;
+export const queryAdvert = `SELECT * FROM property WHERE = $1`;

@@ -4,12 +4,14 @@ import {
   deletePropQuery,
   findOneQuery,
   markAsSold,
+  queryAdvert,
   queryAllProperty,
   queryProperty,
   queryPropertyByType,
   updateProperty,
 } from "../database/sql";
 import { uuid } from "uuidv4";
+import { Stats } from "fs-extra";
 
 const PropertyController = {
   //create a property
@@ -180,6 +182,28 @@ const PropertyController = {
       return res.status(500).json({
         status: 500,
         message: "Error fetching properties by type",
+      });
+    }
+  },
+  
+  //view property of specific advert
+
+  async specificAdvert(req, res) {
+    const { id } = req.body;
+
+    try {
+      const { rows } = await db.query(queryAdvert, [id]);
+      if (rows.length === 0) {
+        res.status(404).json({
+          status: 404,
+          message: "No property found",
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        error: "Internal server error",
+        message: error.meesage,
       });
     }
   },
