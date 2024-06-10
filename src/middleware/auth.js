@@ -6,12 +6,16 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const createToken = (payload) => {
-  const token = jwt.sign({ payload }, process.env.SECRET_KEY);
+  const token = jwt.sign({ payload }, process.env.SECRET_KEY, {
+    algorithm: "HS256",
+    expiresIn: "2d",
+  });
   return token;
 };
 
 export const verifyToken = (req, res, next) => {
   const token = req.headers.authorization || req.body.token;
+  console.log(token, "token");
   if (!token) {
     return res.status(401).json({
       status: 403,
@@ -33,44 +37,7 @@ export const verifyToken = (req, res, next) => {
       });
     }
     req.authData = authData;
+    console.log("payload", req.authData);
     next();
   });
 };
-
-// const Auth = {
-//   /**
-//    * Verify Token
-//    * @param {object} req
-//    * @param {object} res
-//    * @param {object} next
-//    * @returns {object|void} response object
-//    */
-
-//   async verifyToken(req, res, next) {
-//     const token = req.headers["x-access-token"];
-//     if (!token) {
-//       return res.status(401).json({
-//         status: 401,
-//         error: "No token provided",
-//       });
-//     }
-
-//     try {
-//       const decoded = jwt.verify(token, process.env.SECRET_KEY);
-//       const { rows } = await db.query(queryUserById, [decoded.userId]);
-//       if (!rows[0]) {
-//         return res.status(401).json({
-//           status: 401,
-//           error: "Invalid token",
-//         });
-//       }
-//       req.user_id = decoded.userId;
-//       next();
-//     } catch (error) {
-//       return res.status(401).json({
-//         status: 401,
-//         error: "Token not provided",
-//       });
-//     }
-//   },
-// };

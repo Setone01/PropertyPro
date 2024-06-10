@@ -1,4 +1,5 @@
 import moment from "moment";
+import { v4 as uuidv4 } from "uuid";
 import db from "../config/index.js";
 import {
   deletePropQuery,
@@ -10,15 +11,14 @@ import {
   queryPropertyByType,
   updateProperty,
 } from "../database/sql";
-import { uuid } from "uuidv4";
-import { Stats } from "fs-extra";
+// import { Stats } from "fs-extra";
 
 const PropertyController = {
   //create a property
 
   async createProperty(req, res) {
+    console.log("property", req.authData.payload.id);
     const {
-      user_id,
       title,
       status,
       type,
@@ -31,7 +31,8 @@ const PropertyController = {
     } = req.body;
 
     const value = [
-      uuid(),
+      uuidv4(),
+      req.authData.payload.id,
       title,
       status,
       type,
@@ -70,11 +71,29 @@ const PropertyController = {
 
   //update uploaded property advert
   async updateProperty(req, res) {
+    const propId = req.params.id;
+    const { id } = req.authData.payload;
+    const {
+      title,
+      status,
+      price,
+      type,
+      state,
+      city,
+      bedrooms,
+      description,
+      image_url,
+    } = req.body;
+
+     const modified_date = moment().format("YYYY-MM-DD HH:mm:ss");
+     const created_date = moment()
+       .subtract(1, "year")
+       .format("YYYY-MM-DD HH:mm:ss");
+
     try {
-      const { rows } = await db.query(findOneQuery, [
-        req.params.id,
-        req.params.user_id,
-      ]);
+      const checkPropertyParams = [propId, id];
+      console.log("params", checkPropertyParams);
+      const { rows } = await db.query(findOneQuery, checkPropertyParams);
       if (!rows[0]) {
         return res.status(404).json({
           status: 404,
@@ -82,22 +101,25 @@ const PropertyController = {
         });
       }
       const value = [
-        req.body.title,
-        req.body.price,
-        req.body.city,
-        req.body.state,
-        req.body.bedrooms,
-        req.body.description,
-        moment(new Date()),
-        req.body.imageUrl,
-        req.params.id,
-        req.params.user_id,
+        title,
+        status,
+        price,
+        type,
+        state,
+        city,
+        bedrooms,
+        description,
+        image_url,
+        created_date,
+        modified_date,
+        propId,
+        id,
       ];
       const result = await db.query(updateProperty, value);
       const propUpdate = result.rows[0];
       return res
-        .state(201)
-        .json({ message: "Property update succesfull", propUpdate });
+        .status(201)
+        .json({ message: "Property update succesfully", propUpdate });
     } catch (error) {
       return res.status(400).json({
         status: 400,
@@ -185,7 +207,7 @@ const PropertyController = {
       });
     }
   },
-  
+
   //view property of specific advert
 
   async specificAdvert(req, res) {

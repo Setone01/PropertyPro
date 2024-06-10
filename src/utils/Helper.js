@@ -12,7 +12,7 @@ const Helper = {
    */
 
   hashPassword(password) {
-    return bcrypt.hashSync(password.getSaltSync(10));
+    return bcrypt.hash(password.getSaltSync(10));
   },
 
   /**

@@ -1,5 +1,4 @@
-import { uuid } from "uuidv4";
-import moment from "moment";
+import { v4 as uuidv4 } from "uuid";
 import db from "../config/index.js";
 import { compareSync, hashSync } from "bcrypt";
 import { createUser, queryUserByEmail } from "../database/sql.js";
@@ -11,7 +10,7 @@ const UserController = {
       req.body;
 
     const params = [
-      uuid(),
+      uuidv4(),
       first_name,
       last_name,
       email,
@@ -23,12 +22,14 @@ const UserController = {
     try {
       const { rows } = await db.query(createUser, params);
       if (rows) {
-        const { id, email: userEmail } = rows[0];
-        const authUser = { id, email: userEmail };
+        // const { id, email: userEmail } = rows[0];
+        const authUser = rows[0];
         const token = createToken(authUser);
+        console.log("usertoken", token);
         return res.status(201).json({
           status: 201,
           data: { token },
+          authUser,
         });
       }
     } catch (error) {
@@ -53,8 +54,8 @@ const UserController = {
           );
           if (comparePassword) {
             //removing password from the token
-            const { id, email: userEmail } = rows[0];
-            const authUser = { id, email: userEmail };
+            // const { id, email: userEmail } = rows[0];
+            const authUser = rows[0];
 
             const token = createToken(authUser);
             return res.status(201).json({

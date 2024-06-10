@@ -6,14 +6,15 @@ const propertyTable = `DROP TABLE IF EXISTS property CASCADE;
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
     title VARCHAR(100) NOT NULL,
     status VARCHAR(20) NOT NULL,
-    price INTEGER NOT NULL,
+    price DECIMAL(10, 2) CHECK (price >= 0) NOT NULL,
     type VARCHAR(100) NOT NULL,
     state VARCHAR(100) NOT NULL,
     city VARCHAR(100) NOT NULL,
     bedrooms INTEGER NOT NULL,
     description TEXT NOT NULL,
     image_url VARCHAR(255) NOT NULL,
-    created_date TIMESTAMP NOT NULL DEFAULT NOW()
+    created_date TIMESTAMP NOT NULL DEFAULT NOW(),
+    modified_date TIMESTAMP NOT NULL DEFAULT NOW()
     )`;
 
 export async function createPropertyTable() {

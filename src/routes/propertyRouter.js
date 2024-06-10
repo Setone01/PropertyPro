@@ -1,5 +1,6 @@
 import express from "express";
 import PropertyController from "../controller/Property.js";
+import { verifyToken } from "../middleware/auth.js";
 
 const {
   createProperty,
@@ -13,10 +14,10 @@ const {
 
 const propertyRouter = express.Router();
 
-propertyRouter.post("/property", createProperty);
-propertyRouter.put("/property/:id/:user_id", updateProperty);
+propertyRouter.post("/property", verifyToken, createProperty);
+propertyRouter.put("/property/:id", verifyToken, updateProperty);
 propertyRouter.patch("/property/:id", markPropertyAsSold);
-propertyRouter.delete("/property/:id", deleteProperty);
+propertyRouter.delete("/property/:id", verifyToken, deleteProperty);
 propertyRouter.get("/property", getAllProperty);
 propertyRouter.get("/property/type/:type", getPropertiesByType);
 propertyRouter.get("/property/:id", specificAdvert);
