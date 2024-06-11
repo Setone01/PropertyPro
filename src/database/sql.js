@@ -22,7 +22,7 @@ export const updateProperty = `
   RETURNING *
 `;
 export const findOneQuery = `SELECT * FROM property WHERE id=$1 AND user_id=$2`;
-export const markAsSold = `UPDATE property SET status = 'sold' WHERE id=$1`;
+export const updateStatus = `UPDATE property SET status = $1 WHERE id=$2 user_id=$3`;
 export const deletePropQuery = `DELETE FROM property WHERE id=$1`;
 export const queryAllProperty = `SELECT * FROM property`;
 export const queryPropertyByType = `SELECT * FROM properties WHERE type = $1`;

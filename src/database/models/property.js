@@ -5,7 +5,7 @@ const propertyTable = `DROP TABLE IF EXISTS property CASCADE;
     id UUID PRIMARY KEY NOT NULL,
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
     title VARCHAR(100) NOT NULL,
-    status VARCHAR(20) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT ('available'),
     price DECIMAL(10, 2) CHECK (price >= 0) NOT NULL,
     type VARCHAR(100) NOT NULL,
     state VARCHAR(100) NOT NULL,

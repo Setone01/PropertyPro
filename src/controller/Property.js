@@ -4,12 +4,12 @@ import db from "../config/index.js";
 import {
   deletePropQuery,
   findOneQuery,
-  markAsSold,
   queryAdvert,
   queryAllProperty,
   queryProperty,
   queryPropertyByType,
   updateProperty,
+  updateStatus,
 } from "../database/sql";
 // import { Stats } from "fs-extra";
 
@@ -85,10 +85,10 @@ const PropertyController = {
       image_url,
     } = req.body;
 
-     const modified_date = moment().format("YYYY-MM-DD HH:mm:ss");
-     const created_date = moment()
-       .subtract(1, "year")
-       .format("YYYY-MM-DD HH:mm:ss");
+    const modified_date = moment().format("YYYY-MM-DD HH:mm:ss");
+    const created_date = moment()
+      .subtract(1, "year")
+      .format("YYYY-MM-DD HH:mm:ss");
 
     try {
       const checkPropertyParams = [propId, id];
@@ -131,17 +131,35 @@ const PropertyController = {
   //mark property as sold
 
   async markPropertyAsSold(req, res) {
-    try {
-      const result = await db.query(markAsSold, [req.params.id]);
-      return res
-        .status(200)
-        .json({ message: "Property advert is marked as sold", result });
-    } catch (error) {
-      res.status(500).json({
-        status: 500,
-        error: "Error marking the property as sold",
-      });
+    const { markProp } = req.body;
+    const { userId } = req.authData.payload;
+
+    if (markProp.status === "available") {
+      try {
+        const { rows, rowCount } = await db.query(
+          updateStatus[("sold", markProp.id, userId)]
+        );
+        if (rowCount !== 0) {
+          return res.status(200).json({
+            message: "Property advert is marked as sold",
+            data: rows[0],
+          });
+        }
+        return res.status(404).json({
+          status: 404,
+          error: "This property does not exist",
+        });
+      } catch (error) {
+        res.status(500).json({
+          status: 500,
+          error: "Error marking the property as sold",
+        });
+      }
     }
+    return res.status(422).json({
+      status: 422,
+      error: "This property has already been marked sold",
+    });
   },
 
   //Delete an advert
