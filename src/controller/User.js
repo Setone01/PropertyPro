@@ -22,14 +22,12 @@ const UserController = {
     try {
       const { rows } = await db.query(createUser, params);
       if (rows) {
-        // const { id, email: userEmail } = rows[0];
-        const authUser = rows[0];
-        const token = createToken(authUser);
-        console.log("usertoken", token);
+        const { id, email: userEmail } = rows[0];
+        const authUser = { id, email: userEmail };
+        const token = await createToken(authUser);
         return res.status(201).json({
           status: 201,
           data: { token },
-          authUser,
         });
       }
     } catch (error) {
@@ -54,10 +52,10 @@ const UserController = {
           );
           if (comparePassword) {
             //removing password from the token
-            // const { id, email: userEmail } = rows[0];
-            const authUser = rows[0];
+            const { id, email: userEmail } = rows[0];
+            const authUser = { id, email: userEmail };
 
-            const token = createToken(authUser);
+            const token = await createToken(authUser);
             return res.status(201).json({
               status: 201,
               data: { token },
